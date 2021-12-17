@@ -1,0 +1,165 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-tables
+      author: pepe <aaron@greyvine.org>
+      changes:
+        - createTable:
+            tableName: document
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: text
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: collection
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: collection_document
+            columns:
+              - column:
+                  name: collection_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_collection
+                    deleteCascade: true
+                    references: collection(id)
+              - column:
+                  name: document_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_document
+                    deleteCascade: true
+                    references: document(id)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: tag
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: varchar(512)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: document_tag
+            columns:
+              - column:
+                  name: document_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_document
+                    deleteCascade: true
+                    references: document(id)
+              - column:
+                  name: tag_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tag
+                    deleteCascade: true
+                    references: tag(id)
+              - column:
+                  name: value
+                  type: varchar(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: add-collection-document-constraints
+      author: pepe <aaron@greyvine.org>
+      changes:
+        - addUniqueConstraint:
+            constraintName: uq-collection-document-id
+            columnNames: collection_id, document_id
+            tableName: collection_document
